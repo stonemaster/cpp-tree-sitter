@@ -46,13 +46,27 @@ if (tree-sitter_ADDED)
 endif()
 
 
-function(add_grammar_from_repo NAME REPO VERSION)
-  CPMAddPackage(
-    NAME ${NAME}
-    GIT_REPOSITORY ${REPO}
-    VERSION ${VERSION}
-    DOWNLOAD_ONLY YES
-  )
+# Third parameter VERSION is optional
+function(add_grammar_from_repo NAME REPO)
+  set(options)
+  set(oneValueArgs VERSION)
+  set(multiValueArgs)
+  cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if (ARG_VERSION)
+    CPMAddPackage(
+      NAME ${NAME}
+      GIT_REPOSITORY ${REPO}
+      VERSION ${VERSION}
+      DOWNLOAD_ONLY YES
+    )
+  else()
+    CPMAddPackage(
+      NAME ${NAME}
+      GIT_REPOSITORY ${REPO}
+      DOWNLOAD_ONLY YES
+    )
+  endif()
 
   if ("${${NAME}_ADDED}")
     add_library(${NAME})
